@@ -246,6 +246,48 @@ void DbusToFileHandler::newCsrFileAvailable(const std::string& csr,
                                PLDM_FILE_TYPE_CERT_SIGNING_REQUEST);
 }
 
+void DbusToFileHandler::newChapDataFileAvailable(
+    const std::string& chapNameStr, const std::string& chapPasswordStr)
+{
+    namespace fs = std::filesystem;
+    const fs::path chapDataDirPath = "/var/lib/pldm/ChapData";
+
+    if (!fs::exists(chapDataDirPath))
+    {
+        fs::create_directories(chapDataDirPath);
+        fs::permissions(chapDataDirPath,
+                        fs::perms::others_read | fs::perms::owner_write);
+    }
+
+    fs::path chapFilePath = chapDataDirPath / chapNameStr.c_str();
+    uint32_t fileHandle = atoi(fs::path((std::string)chapFilePath).c_str());
+    std::ofstream fileHandleFd;
+    fileHandleFd.open(chapFilePath, std::ios::out | std::ofstream::binary);
+
+    if (!fileHandleFd)
+    {
+        error("chap data file open error:{CHAP_PATH}", "CHAP_PATH",
+              chapFilePath);
+        return;
+    }
+
+    // Fill up the file with chap data parameters and respective sizes
+    auto fileFunc = [&fileHandleFd](auto& paramBuf) {
+        uint32_t paramSize = paramBuf.size();
+        info(" paramBuf size: {PARAM_SIZE} paramBuf:{PARAM_BUF}", "PARAM_SIZE",
+             paramSize, "PARAM_BUF", paramBuf);
+        fileHandleFd.write((char*)&paramSize, sizeof(paramSize));
+        fileHandleFd << paramBuf;
+    };
+    fileFunc(chapNameStr);
+    fileFunc(chapPasswordStr);
+
+    fileHandleFd.close();
+    size_t fileSize = fs::file_size(chapFilePath);
+
+    newFileAvailableSendToHost(fileSize, fileHandle, PLDM_FILE_TYPE_CHAP_DATA);
+}
+
 void DbusToFileHandler::newLicFileAvailable(const std::string& licenseStr)
 {
     namespace fs = std::filesystem;

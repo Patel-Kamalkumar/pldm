@@ -167,6 +167,9 @@ static constexpr auto certAuthority =
 
 static constexpr auto codLicObjPath = "/com/ibm/license";
 static constexpr auto codLicInterface = "com.ibm.License.LicenseManager";
+static constexpr auto chapDataEntry = "com.ibm.Dump.Entry.Resource";
+static constexpr auto chapDataObjPath = "/com/ibm/license";
+static constexpr auto chapDataInterface = "com.ibm.License.LicenseManager";
 class Handler : public CmdHandler
 {
   public:
@@ -349,6 +352,45 @@ class Handler : public CmdHandler
                 break;
             }
             });
+        chapDataMatcher = std::make_unique<sdbusplus::bus::match::match>(
+            pldm::utils::DBusHandler::getBus(),
+            sdbusplus::bus::match::rules::propertiesChanged(chapDataObjPath,
+                                                            chapDataInterface),
+            [this, hostSockFd, hostEid, dbusImplReqester,
+             handler](sdbusplus::message::message& msg) {
+            sdbusplus::message::object_path path;
+            std::map<dbus::Property, pldm::utils::PropertyValue> props;
+            std::string iface;
+            msg.read(iface, props);
+            std::string chapNameStr;
+            std::string chapPwdStr;
+            for (auto& prop : props)
+            {
+                if (prop.first == "ChapName")
+                {
+                    pldm::utils::PropertyValue chapNameStrVal{prop.second};
+                    chapNameStr = std::get<std::string>(chapNameStrVal);
+                    if (chapNameStr.empty())
+                    {
+                        return;
+                    }
+                }
+                if (prop.first == "ChapPassword")
+                {
+                    pldm::utils::PropertyValue chapPwdStrVal{prop.second};
+                    chapPwdStr = std::get<std::string>(chapPwdStrVal);
+                    if (chapPwdStr.empty())
+                    {
+                        return;
+                    }
+                }
+            }
+            dbusToFileHandlers
+                .emplace_back(std::make_unique<
+                              pldm::requester::oem_ibm::DbusToFileHandler>(
+                    hostSockFd, hostEid, dbusImplReqester, path, handler))
+                ->newChapDataFileAvailable(chapNameStr, chapPwdStr);
+            });
     }
 
     /** @brief Handler for readFileIntoMemory command
@@ -486,6 +528,9 @@ class Handler : public CmdHandler
     std::unique_ptr<sdbusplus::bus::match::match>
         codLicensesubs;    //!< Pointer to capture the property changed signal
                            //!< for new license string
+    std::unique_ptr<sdbusplus::bus::match::match>
+        chapDataMatcher;   //!< Pointer to capture the property changed signal
+                           //!< for new chap secret string
     /** @brief PLDM request handler */
     pldm::requester::Handler<pldm::requester::Request>* handler;
     std::vector<std::unique_ptr<pldm::requester::oem_ibm::DbusToFileHandler>>
