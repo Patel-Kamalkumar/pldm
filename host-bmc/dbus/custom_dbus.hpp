@@ -8,6 +8,7 @@
 #include "availability.hpp"
 #include "board.hpp"
 #include "cable.hpp"
+#include "chapdata.hpp"
 #include "chassis.hpp"
 #include "common/utils.hpp"
 #include "connector.hpp"
@@ -22,6 +23,7 @@
 #include "linkreset.hpp"
 #include "location_code.hpp"
 #include "motherboard.hpp"
+#include "oem/ibm/requester/dbus_to_file_handler.hpp"
 #include "operational_status.hpp"
 #include "panel.hpp"
 #include "pcie_device.hpp"
@@ -173,6 +175,16 @@ class CustomDBus
     void implementPcieTopologyInterface(
         const std::string& path, uint8_t mctpEid,
         pldm::host_effecters::HostEffecterParser* hostEffecterParser);
+
+    /** @brief Implement ChapData  interface
+     *
+     *  @param[in] path - The object path
+     *  @param[in] dbusToFilehandlerObj - ref object to raise NewFileAvailable
+     * request
+     */
+    void implementChapDataInterface(
+        const std::string& path,
+        pldm::requester::oem_ibm::DbusToFileHandler* dbusToFilehandlerObj);
 
     void implementObjectEnableIface(const std::string& path, bool value);
     /** @brief Set the Asserted property
@@ -333,6 +345,7 @@ class CustomDBus
     std::unordered_map<ObjectPath, std::unique_ptr<SoftWareVersion>>
         softWareVersion;
     std::unordered_map<ObjectPath, std::unique_ptr<PCIETopology>> pcietopology;
+    std::unordered_map<ObjectPath, std::unique_ptr<ChapDatas>> chapdata;
     std::unordered_map<ObjectPath, std::unique_ptr<PCIeDevice>> pcieDevice;
     std::unordered_map<ObjectPath, std::unique_ptr<Cable>> cable;
     std::unordered_map<ObjectPath, std::unique_ptr<Asset>> asset;

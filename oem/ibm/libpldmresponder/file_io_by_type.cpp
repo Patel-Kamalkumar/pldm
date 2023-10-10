@@ -5,7 +5,7 @@
 
 #include "common/utils.hpp"
 #include "file_io_type_cert.hpp"
-#include "file_io_type_chaap.hpp"
+#include "file_io_type_chap.hpp"
 #include "file_io_type_dump.hpp"
 #include "file_io_type_lic.hpp"
 #include "file_io_type_lid.hpp"

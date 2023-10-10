@@ -1,6 +1,7 @@
 #pragma once
 
 #include "host-bmc/dbus_to_host_effecters.hpp"
+#include "oem/ibm/requester/dbus_to_file_handler.hpp"
 
 #include <nlohmann/json.hpp>
 
@@ -140,6 +141,13 @@ void findPortObjects(const std::string& cardObjPath,
 void hostPCIETopologyIntf(
     uint8_t mctp_eid,
     pldm::host_effecters::HostEffecterParser* hostEffecterParser);
+
+/** @brief host ChapData Interface
+ *  @param[in] dbusToFilehandlerObj - ref object to raise NewFileAvailable
+ * request
+ */
+void hostChapDataIntf(
+    pldm::requester::oem_ibm::DbusToFileHandler* dbusToFilehandlerObj);
 
 /** @brief Fetch D-Bus object path based on location details and the type of
  * Inventory Item

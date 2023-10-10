@@ -168,8 +168,8 @@ static constexpr auto certAuthority =
 static constexpr auto codLicObjPath = "/com/ibm/license";
 static constexpr auto codLicInterface = "com.ibm.License.LicenseManager";
 static constexpr auto chapDataEntry = "com.ibm.Dump.Entry.Resource";
-static constexpr auto chapDataObjPath = "/com/ibm/license";
-static constexpr auto chapDataInterface = "com.ibm.License.LicenseManager";
+static constexpr auto chapDataObjPath = "/xyz/openbmc_project/pldm";
+static constexpr auto chapDataInterface = "xyz.openbmc_project.PLDM.ChapData";
 class Handler : public CmdHandler
 {
   public:
@@ -352,7 +352,7 @@ class Handler : public CmdHandler
                 break;
             }
             });
-        chapDataMatcher = std::make_unique<sdbusplus::bus::match::match>(
+        /*chapDataMatcher = std::make_unique<sdbusplus::bus::match::match>(
             pldm::utils::DBusHandler::getBus(),
             sdbusplus::bus::match::rules::propertiesChanged(chapDataObjPath,
                                                             chapDataInterface),
@@ -390,7 +390,7 @@ class Handler : public CmdHandler
                               pldm::requester::oem_ibm::DbusToFileHandler>(
                     hostSockFd, hostEid, dbusImplReqester, path, handler))
                 ->newChapDataFileAvailable(chapNameStr, chapPwdStr);
-            });
+            });*/
     }
 
     /** @brief Handler for readFileIntoMemory command

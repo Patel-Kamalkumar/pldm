@@ -57,11 +57,11 @@ class DbusToFileHandler
     void newCsrFileAvailable(const std::string& csr,
                              const std::string fileHandle);
 
-    /** @brief Process the new chaapdata file available
-     *  @param[in] chaapStr - chaap data string
+    /** @brief Process the new chapdata file available
+     *  @param[in] chapStr - chap data string
      *  @param[in] fileHandle - file Handle for new file request
      */
-    void newChapDataFileAvailable(const std::string& chaapStr,
+    void newChapDataFileAvailable(const std::string& chapStr,
                                   const std::string& fileHandle);
 
     /** @brief Process the new license file available

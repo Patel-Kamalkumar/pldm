@@ -11,6 +11,7 @@
 #include "libpldmresponder/oem_handler.hpp"
 #include "libpldmresponder/pdr_utils.hpp"
 #include "libpldmresponder/platform.hpp"
+#include "oem/ibm/requester/dbus_to_file_handler.hpp"
 #include "requester/handler.hpp"
 #include "utils.hpp"
 
@@ -90,6 +91,12 @@ class Handler : public oem_platform::Handler
         setEventReceiverCnt = 0;
         pldm::responder::utils::hostPCIETopologyIntf(mctp_eid,
                                                      hostEffecterParser);
+        sdbusplus::message::object_path path;
+        auto& dbusToFileHandlerRef = dbusToFileHandlers.emplace_back(
+            std::make_unique<pldm::requester::oem_ibm::DbusToFileHandler>(
+                mctp_fd, mctp_eid, &requester, path, handler));
+
+        pldm::responder::utils::hostChapDataIntf(dbusToFileHandlerRef.get());
 
         createMatches();
 
@@ -547,6 +554,9 @@ class Handler : public oem_platform::Handler
     /** @brief method to create matches for the proeprty changed signal for link
      * reset on all slot paths */
     void createMatches();
+
+    std::vector<std::unique_ptr<pldm::requester::oem_ibm::DbusToFileHandler>>
+        dbusToFileHandlers;
 };
 
 /** @brief Method to encode code update event msg

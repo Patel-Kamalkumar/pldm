@@ -16,7 +16,7 @@ namespace responder
 /** @class ChapHandler
  *
  *  @brief Inherits and implements FileHandler. This class is used
- *  to read/write chaap secret file
+ *  to read/write chap secret file
  */
 class ChapHandler : public FileHandler
 {
@@ -24,7 +24,7 @@ class ChapHandler : public FileHandler
     /** @brief CertHandler constructor
      */
     ChapHandler(uint32_t fileHandle, uint16_t fileType) :
-        FileHandler(fileHandle), chaapType(fileType)
+        FileHandler(fileHandle), chapType(fileType)
     {}
 
     virtual int writeFromMemory(uint32_t /*offset*/, uint32_t /*length*/,
@@ -86,7 +86,7 @@ class ChapHandler : public FileHandler
     ~ChapHandler() {}
 
   private:
-    uint16_t chaapType; //!< type of the chaap secret file
+    uint16_t chapType; //!< type of the chap secret file
 };
 } // namespace responder
 } // namespace pldm

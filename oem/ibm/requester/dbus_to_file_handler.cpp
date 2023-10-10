@@ -251,7 +251,7 @@ void DbusToFileHandler::newChapDataFileAvailable(
 {
     namespace fs = std::filesystem;
     const fs::path chapDataDirPath = "/var/lib/pldm/ChapData";
-
+    std::cout << "KK newChapDataFileAvailable starting\n";
     if (!fs::exists(chapDataDirPath))
     {
         fs::create_directories(chapDataDirPath);
@@ -263,7 +263,7 @@ void DbusToFileHandler::newChapDataFileAvailable(
     uint32_t fileHandle = atoi(fs::path((std::string)chapFilePath).c_str());
     std::ofstream fileHandleFd;
     fileHandleFd.open(chapFilePath, std::ios::out | std::ofstream::binary);
-
+    std::cout << "KK writing new filepath:" << chapFilePath << "\n";
     if (!fileHandleFd)
     {
         error("chap data file open error:{CHAP_PATH}", "CHAP_PATH",

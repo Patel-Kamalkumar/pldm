@@ -359,6 +359,18 @@ void CustomDBus::implementPcieTopologyInterface(
     }
 }
 
+void CustomDBus::implementChapDataInterface(
+    const std::string& path,
+    pldm::requester::oem_ibm::DbusToFileHandler* dbusToFilehandlerObj)
+{
+    if (chapdata.find(path) == chapdata.end())
+    {
+        chapdata.emplace(path, std::make_unique<ChapDatas>(
+                                   pldm::utils::DBusHandler::getBus(),
+                                   path.c_str(), dbusToFilehandlerObj));
+    }
+}
+
 void CustomDBus::implementLicInterfaces(
     const std::string& path, const uint32_t& authdevno, const std::string& name,
     const std::string& serialno, const uint64_t& exptime,

@@ -212,7 +212,7 @@ void FruImpl::buildFRUTable()
                 }
                 catch (const std::exception& e)
                 {
-                    info(
+                    error(
                         "Config JSONs missing for the item interface type, interface = {INTF}",
                         "INTF", interface.first);
                     break;
@@ -249,9 +249,7 @@ std::string FruImpl::populatefwVersion()
                                           pldm::utils::dbusProperties, "Get");
         method.append("xyz.openbmc_project.Association", "endpoints");
         std::variant<std::vector<std::string>> paths;
-        auto reply = bus.call(
-            method,
-            std::chrono::duration_cast<microsec>(sec(DBUS_TIMEOUT)).count());
+        auto reply = bus.call(method, dbusTimeout);
         reply.read(paths);
         auto fwRunningVersion = std::get<std::vector<std::string>>(paths)[0];
         constexpr auto versionIntf = "xyz.openbmc_project.Software.Version";
@@ -576,7 +574,7 @@ void FruImpl::buildIndividualFRU(const std::string& fruInterface,
         pldm_entity node_entity = pldm_entity_extract(node);
         objToEntityNode[fruObjectPath] = node_entity;
         error(
-            "Building Individual FRU [FRU_OBJ_PATH] with entityid [ {ENTITY_TYP}, {ENTITY_NUM}, {ENTITY_ID} ] Parent :[ {P_ENTITY_TYP}, {P_ENTITY_NUM}, {P_ENTITY_ID} ]",
+            "Building Individual FRU [{FRU_OBJ_PATH}] with entityid [ {ENTITY_TYP}, {ENTITY_NUM}, {ENTITY_ID} ] Parent :[ {P_ENTITY_TYP}, {P_ENTITY_NUM}, {P_ENTITY_ID} ]",
             "FRU_OBJ_PATH", fruObjectPath, "ENTITY_TYP",
             static_cast<unsigned>(node_entity.entity_type), "ENTITY_NUM",
             static_cast<unsigned>(node_entity.entity_instance_num), "ENTITY_ID",
@@ -617,7 +615,7 @@ void FruImpl::buildIndividualFRU(const std::string& fruInterface,
     }
     catch (const std::exception& e)
     {
-        info(
+        error(
             "Config JSONs missing for the item in concurrent add path interface type, interface = {FRU_INTF}",
             "FRU_INTF", fruInterface);
     }
@@ -866,9 +864,7 @@ void FruImpl::subscribeFruPresence(
         method.append(inventoryObjPath);
         method.append(0);
         method.append(std::vector<std::string>({fruInterface}));
-        auto reply = bus.call(
-            method,
-            std::chrono::duration_cast<microsec>(sec(DBUS_TIMEOUT)).count());
+        auto reply = bus.call(method, dbusTimeout);
         reply.read(fruObjPaths);
 
         for (const auto& fruObjPath : fruObjPaths)
