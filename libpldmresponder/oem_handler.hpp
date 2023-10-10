@@ -182,6 +182,24 @@ class Handler : public CmdHandler
 
 } // namespace oem_fru
 
+namespace oem_fileio
+{
+
+class Handler : public CmdHandler
+{
+  public:
+    /** @brief Process to new file available request
+     *
+     */
+    virtual void
+        newChapDataFileAvailable(const std::string& chapNameStr,
+                                 const std::string& chapPasswordStr) = 0;
+
+    virtual ~Handler() = default;
+};
+
+} // namespace oem_fileio
+
 } // namespace responder
 
 } // namespace pldm
