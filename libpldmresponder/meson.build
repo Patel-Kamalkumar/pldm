@@ -48,7 +48,6 @@ sources = [
   '../host-bmc/dbus/software_version.cpp',
   '../host-bmc/dbus/deserialize.cpp',
   '../host-bmc/dbus/pcie_topology.cpp',
-  '../host-bmc/dbus/chapdata.cpp',
   '../host-bmc/dbus/linkreset.cpp',
   'event_parser.cpp'
 ]
@@ -66,7 +65,6 @@ if get_option('oem-ibm').enabled()
     '../oem/ibm/libpldmresponder/file_io_by_type.cpp',
     '../oem/ibm/libpldmresponder/file_io_type_pel.cpp',
     '../oem/ibm/libpldmresponder/file_io_type_dump.cpp',
-    '../oem/ibm/libpldmresponder/file_io_type_chap.cpp',
     '../oem/ibm/libpldmresponder/file_io_type_cert.cpp',
     '../oem/ibm/libpldmresponder/platform_oem_ibm.cpp',
     '../oem/ibm/libpldmresponder/fru_oem_ibm.cpp',
